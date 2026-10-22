@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>열과 우리 생활 퀴즈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+  :root { --accent:#C2410C; --ink:#1F2937; --muted:#4B5563; --ok:#15803D; --bad:#B91C1C; --sel:#1D4ED8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#FFF7ED; font-family:'Noto Sans KR', sans-serif; color:var(--ink); }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 16px 48px; display:flex; flex-direction:column; gap:20px; }
+  .top { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-weight:700; }
+  .top .brand { color:var(--accent); font-size:15px; letter-spacing:.04em; }
+  .card { background:#fff; border-radius:20px; padding:32px 24px; box-shadow:0 4px 24px rgba(0,0,0,.06); display:flex; flex-direction:column; gap:22px; }
+  .center { align-items:center; text-align:center; }
+  h1 { margin:0; font-size:clamp(28px,6vw,40px); font-weight:900; line-height:1.2; }
+  h2 { margin:0; font-size:clamp(19px,4.5vw,24px); line-height:1.55; white-space:pre-line; }
+  .sub { color:var(--muted); font-size:17px; line-height:1.6; }
+  .field { width:100%; max-width:420px; display:flex; flex-direction:column; gap:10px; text-align:left; }
+  label { font-weight:700; }
+  input { font:inherit; font-size:20px; padding:14px 16px; border:2px solid #D1D5DB; border-radius:12px; width:100%; }
+  input:focus { outline:3px solid var(--accent); outline-offset:1px; }
+  .btn { font:inherit; min-height:56px; padding:0 28px; border:none; border-radius:12px; background:var(--accent); color:#fff; font-size:19px; font-weight:700; cursor:pointer; }
+  .btn:disabled { background:#9CA3AF; cursor:not-allowed; }
+  .btn.dark { background:var(--ink); }
+  .btn.line { background:#fff; color:var(--ink); border:2px solid var(--ink); }
+  .meta { display:flex; justify-content:space-between; font-weight:700; color:var(--muted); font-size:15px; }
+  .bar { height:10px; background:#FED7AA; border-radius:999px; overflow:hidden; margin-top:8px; }
+  .bar > div { height:100%; background:var(--accent); width:0; transition:width .3s; }
+  .tag { align-self:flex-start; font-size:13px; font-weight:700; padding:4px 12px; border-radius:999px; background:#F3F4F6; color:#374151; }
+  .qn { color:var(--accent); font-weight:900; }
+  .opts { display:flex; flex-direction:column; gap:12px; }
+  .opt { font:inherit; display:flex; align-items:center; gap:14px; width:100%; min-height:60px; padding:12px 16px; text-align:left; border:2px solid #D1D5DB; background:#fff; color:var(--ink); border-radius:14px; font-size:18px; line-height:1.45; cursor:pointer; }
+  .opt .n { flex:none; width:36px; height:36px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:#F3F4F6; font-weight:900; }
+  .opt .t { flex:1; }
+  .opt .m { flex:none; font-size:14px; font-weight:700; padding:4px 10px; border-radius:999px; color:#fff; }
+  .opt.selected { border-color:var(--sel); background:#EFF6FF; } .opt.selected .n { background:var(--sel); color:#fff; }
+  .opt.correct { border-color:var(--ok); background:#F0FDF4; } .opt.correct .n, .opt.correct .m { background:var(--ok); color:#fff; }
+  .opt.wrong { border-color:var(--bad); background:#FEF2F2; } .opt.wrong .n, .opt.wrong .m { background:var(--bad); color:#fff; }
+  .opt.dim { border-color:#E5E7EB; color:#6B7280; }
+  .opt:disabled { cursor:default; }
+  .feedback { padding:20px; border-radius:14px; display:flex; flex-direction:column; gap:12px; }
+  .feedback.ok { background:#F0FDF4; } .feedback.bad { background:#FEF2F2; }
+  .feedback .title { font-size:22px; font-weight:900; }
+  .feedback.ok .title { color:var(--ok); } .feedback.bad .title { color:var(--bad); }
+  .feedback .exp { font-size:17px; line-height:1.7; }
+  .actions { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; }
+  .head { padding-bottom:20px; border-bottom:3px solid var(--ink); display:flex; flex-direction:column; gap:6px; }
+  .score { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .score .big { font-size:64px; font-weight:900; color:var(--accent); line-height:1; }
+  .tbl { overflow-x:auto; border:1px solid #E5E7EB; border-radius:12px; }
+  table { width:100%; min-width:480px; border-collapse:collapse; font-size:16px; }
+  th, td { padding:12px 14px; text-align:left; border-top:1px solid #E5E7EB; }
+  th { background:#F3F4F6; font-size:14px; border-top:none; }
+  .o { color:var(--ok); font-weight:900; } .x { color:var(--bad); font-weight:900; }
+  .review { padding:14px 16px; background:#FFF7ED; border-radius:12px; line-height:1.7; }
+  .review b { color:#9A3412; }
+  .hidden { display:none !important; }
+  @media print { body { background:#fff; } .actions, .top { display:none; } .card { box-shadow:none; padding:0; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top"><div class="brand">5학년 2학기 과학 · 형성평가</div><div id="who"></div></div>
+
+  <section id="intro" class="card center">
+    <h1>열과 우리 생활 퀴즈</h1>
+    <div class="sub">모두 10문제예요. 한 문제씩 풀고 바로 정답과 해설을 확인해요.</div>
+    <form id="nameForm" class="field">
+      <label for="name">이름을 입력하세요</label>
+      <input id="name" type="text" maxlength="20" placeholder="예: 김하늘" autocomplete="off">
+      <button class="btn" id="startBtn" type="submit" disabled>입장하기</button>
+    </form>
+  </section>
+
+  <section id="quiz" class="hidden" style="display:flex;flex-direction:column;gap:16px">
+    <div>
+      <div class="meta"><div id="count"></div><div id="sofar"></div></div>
+      <div class="bar"><div id="barFill"></div></div>
+    </div>
+    <div class="card">
+      <div class="tag" id="area"></div>
+      <h2><span class="qn" id="qnum"></span><span id="stem"></span></h2>
+      <div class="opts" id="opts"></div>
+      <div id="feedback" class="feedback hidden"><div class="title" id="fbTitle"></div><div class="exp"><b>해설</b>&nbsp; <span id="fbExp"></span></div></div>
+      <div class="actions">
+        <button class="btn" id="checkBtn" type="button" disabled>정답 확인</button>
+        <button class="btn dark hidden" id="nextBtn" type="button">다음 문제</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="card hidden">
+    <div class="head">
+      <div class="brand" style="color:var(--accent);font-weight:700">결과지</div>
+      <h1 style="font-size:clamp(24px,5vw,32px)">열과 우리 생활 형성평가</h1>
+      <div class="sub" style="display:flex;gap:20px;flex-wrap:wrap"><div>이름: <b id="rName"></b></div><div>날짜: <span id="rDate"></span></div></div>
+    </div>
+    <div class="score">
+      <div><span class="big" id="rScore"></span> <span style="font-size:24px;font-weight:700;color:var(--muted)">/ 10</span></div>
+      <div><div style="font-size:22px;font-weight:900" id="rMsg"></div><div class="sub" id="rPct"></div></div>
+    </div>
+    <div class="tbl"><table><thead><tr><th>번호</th><th>학습 내용</th><th>내 답</th><th>정답</th><th>결과</th></tr></thead><tbody id="rRows"></tbody></table></div>
+    <div id="rReviewWrap" style="display:flex;flex-direction:column;gap:12px">
+      <h2 style="font-size:20px">다시 공부해 볼 내용</h2>
+      <div id="rReview" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+    <div class="actions">
+      <button class="btn line" id="printBtn" type="button">결과지 인쇄</button>
+      <button class="btn dark" id="restartBtn" type="button">처음으로</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const Q = [
+  { area:'온도의 의미', stem:'물체의 차갑거나 따뜻한 정도를 숫자로 나타낸 것은 무엇일까요?', options:['열','온도','무게','단열'], answer:1,
+    exp:'온도는 물체의 차갑고 따뜻한 정도를 숫자로 나타낸 것이에요. 단위는 ℃(섭씨도)를 써요. 열과 온도는 같은 말이 아니에요.' },
+  { area:'온도계 사용', stem:'온도를 잴 대상과 알맞은 온도계를 바르게 짝 지은 것은 무엇일까요?', options:['교실 안 공기의 온도 – 적외선 온도계','어항 속 물의 온도 – 적외선 온도계','비커에 담긴 물의 온도 – 귀 체온계','운동장 철봉 표면의 온도 – 적외선 온도계'], answer:3,
+    exp:'적외선 온도계는 고체 물체의 표면 온도를, 알코올 온도계는 물이나 공기 같은 액체·기체의 온도를 잴 때 써요.' },
+  { area:'열의 이동 방향', stem:'온도가 다른 두 물체가 닿아 있을 때, 열은 어떻게 이동할까요?', options:['온도가 높은 물체에서 온도가 낮은 물체로 이동한다.','차가운 기운이 차가운 물체에서 따뜻한 물체로 이동한다.','무거운 물체에서 가벼운 물체로 이동한다.','두 물체가 닿아 있으면 열은 이동하지 않는다.'], answer:0,
+    exp:'열은 온도가 높은 물체에서 온도가 낮은 물체로 이동해요. 차가운 기운이 이동하는 것이 아니라, 따뜻한 쪽의 열이 빠져나가는 거예요.' },
+  { area:'접촉한 두 물체의 온도 변화', stem:'따뜻한 물이 든 컵을 차가운 물이 든 수조에 넣었어요.\n시간이 지나면 두 물의 온도는 어떻게 될까요?', options:['컵 속 물은 계속 따뜻해지고, 수조 속 물은 계속 차가워진다.','수조의 차가운 기운이 컵으로 들어가 컵 속 물만 온도가 변한다.','컵 속 물은 온도가 낮아지고 수조 속 물은 높아지다가, 두 온도가 같아진다.','두 물의 온도가 서로 바뀌어 컵 속 물이 수조 속 물보다 차가워진다.'], answer:2,
+    exp:'열이 따뜻한 물에서 차가운 물로 이동해요. 그래서 따뜻한 물은 온도가 낮아지고 차가운 물은 높아지다가, 결국 두 온도가 같아져요.' },
+  { area:'고체에서 열의 이동(전도)', stem:'구리판의 한쪽 끝을 가열할 때, 열이 이동하는 모습으로 옳은 것은 무엇일까요?', options:['가열한 곳과 상관없이 구리판 전체가 한꺼번에 뜨거워진다.','가열한 부분에서 멀어지는 방향으로 구리판을 따라 이동한다.','구리판이 중간에 잘려 있어도 건너편으로 열이 잘 이동한다.','열은 언제나 위쪽 방향으로만 이동한다.'], answer:1,
+    exp:'고체에서 열은 온도가 높은 곳에서 낮은 곳으로 고체 물질을 따라 이동해요. 이것을 전도라고 해요. 고체가 끊겨 있으면 열이 잘 이동하지 않아요.' },
+  { area:'물질에 따른 열 이동 빠르기', stem:'프라이팬의 몸체는 금속으로, 손잡이는 나무나 플라스틱으로 만드는 까닭은 무엇일까요?', options:['나무나 플라스틱은 금속보다 열이 빠르게 이동하기 때문에','손잡이가 무거워야 프라이팬이 넘어지지 않기 때문에','나무나 플라스틱은 온도가 절대 변하지 않기 때문에','나무나 플라스틱은 금속보다 열이 느리게 이동하기 때문에'], answer:3,
+    exp:'금속은 열이 빠르게 이동해서 음식을 잘 익히고, 나무나 플라스틱은 열이 느리게 이동해서 손잡이를 잡아도 덜 뜨거워요.' },
+  { area:'단열', stem:'단열에 대한 설명으로 옳은 것은 무엇일까요?', options:['단열재는 바깥의 차가운 기운이 들어오는 것만 막아 준다.','단열은 열이 더 빠르게 이동하도록 돕는 것이다.','단열은 두 물질 사이에서 열의 이동을 막는 것이다.','단열은 추운 겨울에만 쓸모가 있다.'], answer:2,
+    exp:'단열은 두 물질 사이에서 열의 이동을 막는 거예요. 이중창, 보온병, 아이스박스처럼 여름과 겨울 모두 쓰여요.' },
+  { area:'액체에서 열의 이동(대류)', stem:'물이 든 비커의 바닥을 가열할 때, 물에서 열은 어떻게 이동할까요?', options:['데워진 물이 위로 올라가고, 위에 있던 물이 아래로 내려오며 열이 이동한다.','데워진 물은 바닥에 그대로 머물고, 위쪽 물은 계속 차갑다.','비커 벽을 따라서만 열이 이동하고 물은 움직이지 않는다.','차가운 기운이 위로 빠져나가면서 물 전체가 따뜻해진다.'], answer:0,
+    exp:'액체에서는 온도가 높아진 물이 위로 올라가고, 위에 있던 물이 아래로 내려오면서 열이 이동해요. 이것을 대류라고 해요.' },
+  { area:'기체에서 열의 이동(대류)', stem:'켜 놓은 전열기 위쪽에 종이 바람개비를 매달았더니 바람개비가 빙글빙글 돌았어요.\n그 까닭은 무엇일까요?', options:['위쪽의 차가운 공기가 아래로 내려오며 바람개비를 밀었기 때문에','전열기 주변에서 데워진 공기가 위로 올라갔기 때문에','전열기의 열이 실을 따라 바람개비 종이로 전해졌기 때문에','데워진 공기가 무거워져 아래로 내려갔기 때문에'], answer:1,
+    exp:'전열기 주변 공기가 데워져 위로 올라가면서 바람개비를 밀어 돌려요. 기체에서도 액체처럼 대류로 열이 이동해요.' },
+  { area:'냉난방 기구 배치', stem:'방 전체를 고르게 시원하게, 또는 따뜻하게 하려면\n냉난방 기구를 어디에 두는 것이 좋을까요?', options:['에어컨은 바닥 가까이, 난로는 천장 가까이에 둔다.','에어컨과 난로 모두 천장 가까이에 둔다.','에어컨은 높은 곳에, 난로는 낮은 곳에 둔다.','에어컨과 난로 모두 바닥 가까이에 둔다.'], answer:2,
+    exp:'차가운 공기는 아래로 내려오고 데워진 공기는 위로 올라가요. 그래서 에어컨은 높은 곳, 난로는 낮은 곳에 두면 방 전체가 고르게 시원해지거나 따뜻해져요.' }
+];
+const NUMS = ['①','②','③','④'];
+const $ = (id) => document.getElementById(id);
+let name = '', idx = 0, selected = null, revealed = false, answers = [];
+
+function show(id) { ['intro','quiz','result'].forEach(s => $(s).classList.toggle('hidden', s !== id)); }
+function score() { return answers.reduce((n, a, i) => n + (a === Q[i].answer ? 1 : 0), 0); }
+
+$('name').addEventListener('input', e => { $('startBtn').disabled = !e.target.value.trim(); });
+$('nameForm').addEventListener('submit', e => {
+  e.preventDefault();
+  name = $('name').value.trim();
+  if (!name) return;
+  idx = 0; answers = [];
+  $('who').textContent = name + ' 학생';
+  show('quiz'); renderQ();
+});
+
+function renderQ() {
+  const q = Q[idx];
+  selected = null; revealed = false;
+  $('count').textContent = '문제 ' + (idx + 1) + ' / ' + Q.length;
+  $('sofar').textContent = '맞힌 문제 ' + score() + '개';
+  $('barFill').style.width = (idx / Q.length * 100) + '%';
+  $('area').textContent = q.area;
+  $('qnum').textContent = 'Q' + (idx + 1) + '. ';
+  $('stem').textContent = q.stem;
+  $('feedback').classList.add('hidden');
+  $('checkBtn').classList.remove('hidden'); $('checkBtn').disabled = true;
+  $('nextBtn').classList.add('hidden');
+  const box = $('opts'); box.innerHTML = '';
+  q.options.forEach((label, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opt';
+    b.innerHTML = '<span class="n"></span><span class="t"></span>';
+    b.querySelector('.n').textContent = NUMS[i];
+    b.querySelector('.t').textContent = label;
+    b.addEventListener('click', () => {
+      if (revealed) return;
+      selected = i;
+      [...box.children].forEach((c, j) => c.classList.toggle('selected', j === i));
+      $('checkBtn').disabled = false;
+    });
+    box.appendChild(b);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+$('checkBtn').addEventListener('click', () => {
+  if (selected == null || revealed) return;
+  revealed = true;
+  const q = Q[idx];
+  answers[idx] = selected;
+  [...$('opts').children].forEach((c, j) => {
+    c.classList.remove('selected'); c.disabled = true;
+    let mark = '';
+    if (j === q.answer) { c.classList.add('correct'); mark = j === selected ? '정답 · 내 답' : '정답'; }
+    else if (j === selected) { c.classList.add('wrong'); mark = '내 답'; }
+    else c.classList.add('dim');
+    if (mark) { const m = document.createElement('span'); m.className = 'm'; m.textContent = mark; c.appendChild(m); }
+  });
+  const ok = selected === q.answer;
+  const fb = $('feedback');
+  fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
+  $('fbTitle').textContent = ok ? '정답이에요!' : '아쉬워요! 정답은 ' + NUMS[q.answer] + '번이에요.';
+  $('fbExp').textContent = q.exp;
+  $('sofar').textContent = '맞힌 문제 ' + score() + '개';
+  $('barFill').style.width = ((idx + 1) / Q.length * 100) + '%';
+  $('checkBtn').classList.add('hidden');
+  $('nextBtn').textContent = idx === Q.length - 1 ? '결과 보기' : '다음 문제';
+  $('nextBtn').classList.remove('hidden');
+});
+
+$('nextBtn').addEventListener('click', () => {
+  if (idx < Q.length - 1) { idx++; renderQ(); } else renderResult();
+});
+
+function renderResult() {
+  const s = score(), d = new Date();
+  $('who').textContent = '';
+  $('rName').textContent = name;
+  $('rDate').textContent = d.getFullYear() + '. ' + (d.getMonth() + 1) + '. ' + d.getDate() + '.';
+  $('rScore').textContent = s;
+  $('rPct').textContent = '점수 ' + Math.round(s / Q.length * 100) + '점 (100점 만점)';
+  $('rMsg').textContent = s === Q.length ? '완벽해요! 모두 맞혔어요!' : s >= 8 ? '아주 잘했어요!' : s >= 5 ? '잘했어요! 틀린 문제를 다시 확인해 봐요.' : '해설을 보며 다시 공부해 봐요!';
+  const rows = $('rRows'); rows.innerHTML = '';
+  const review = $('rReview'); review.innerHTML = '';
+  Q.forEach((q, i) => {
+    const ok = answers[i] === q.answer;
+    const tr = document.createElement('tr');
+    [i + 1, q.area, answers[i] == null ? '-' : NUMS[answers[i]], NUMS[q.answer], ok ? 'O' : 'X'].forEach((v, k) => {
+      const td = document.createElement('td'); td.textContent = v;
+      if (k === 4) td.className = ok ? 'o' : 'x';
+      tr.appendChild(td);
+    });
+    rows.appendChild(tr);
+    if (!ok) {
+      const div = document.createElement('div'); div.className = 'review';
+      const b = document.createElement('b'); b.textContent = (i + 1) + '번 · ' + q.area;
+      div.appendChild(b); div.appendChild(document.createElement('br'));
+      div.appendChild(document.createTextNode(q.exp));
+      review.appendChild(div);
+    }
+  });
+  $('rReviewWrap').classList.toggle('hidden', s === Q.length);
+  show('result');
+  window.scrollTo({ top: 0 });
+}
+
+$('printBtn').addEventListener('click', () => window.print());
+$('restartBtn').addEventListener('click', () => {
+  $('name').value = ''; $('startBtn').disabled = true; $('who').textContent = '';
+  show('intro'); $('name').focus();
+});
+</script>
+</body>
+</html>
